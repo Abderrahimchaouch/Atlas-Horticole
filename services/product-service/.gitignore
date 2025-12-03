@@ -1,33 +1,41 @@
-HELP.md
+### Maven ###
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
+.idea/
 *.iml
 *.ipr
+*.iws
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+### Eclipse ###
+.project
+.classpath
+.settings/
 
-### VS Code ###
-.vscode/
+### Logs ###
+*.log
+logs/
+
+### Runtime files ###
+*.pid
+*.seed
+
+### OS files ###
+.DS_Store
+Thumbs.db
+
+### Docker volumes ###
+postgres-data/
+docker-data/
+minio-data/
+
+### Environment variables ###
+.env
+.env.*
+.env.local
+
+### Node (si tu ajoutes Angular plus tard) ###
+node_modules/
+dist/

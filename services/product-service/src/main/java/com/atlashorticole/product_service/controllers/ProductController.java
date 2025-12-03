@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping("api/products/")
+@RequestMapping("api/products")
 @Validated
 public class ProductController {
 

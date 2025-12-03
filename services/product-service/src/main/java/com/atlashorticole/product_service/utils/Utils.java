@@ -2,9 +2,6 @@ package com.atlashorticole.product_service.utils;
 
 import java.util.Set;
 
-import javax.swing.SortOrder;
-
-import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.Sort;
 
 public class Utils {
