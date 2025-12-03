@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.atlashorticole.product_service.Mapper.ProductMapper;
 import com.atlashorticole.product_service.domain.Category;
@@ -83,6 +85,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(Long id) {
+        productRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, 
+                "Product not found with ID: " + id
+            ));
         productRepository.deleteById(id);
     }
     

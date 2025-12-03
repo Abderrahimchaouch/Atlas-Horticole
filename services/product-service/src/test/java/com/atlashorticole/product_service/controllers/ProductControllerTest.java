@@ -1,11 +1,13 @@
 package com.atlashorticole.product_service.controllers;
-/* 
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,34 +16,41 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.atlashorticole.product_service.domain.Category;
 import com.atlashorticole.product_service.dto.ProductDTO;
 import com.atlashorticole.product_service.services.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(ProductController.class)
+@WebMvcTest(controllers = ProductController.class)
 class ProductControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ProductService productService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    private ProductDTO testProductDTO;
+    private final String BASED_URL = "/api/products/";
 
+    private ProductDTO testProductDTO;
+    private ProductDTO testProductDTO2;
+    private List<ProductDTO> products;
     @BeforeEach
     void setUp() {
+        products = new ArrayList<>();
         testProductDTO = ProductDTO.builder()
                 .id(1L)
                 .name("Test Product")
@@ -52,22 +61,37 @@ class ProductControllerTest {
                 .active(true)
                 .displayOrder(1)
                 .build();
+        testProductDTO2 = ProductDTO.builder()
+                .id(2L)
+                .name("Test Product2")
+                .description("Test Description2")
+                .category(Category.BIOSTIMULANT)
+                .imageUrl("http://example.com/image2.jpg")
+                .technicalSheetUrl("http://example.com/sheet2.pdf")
+                .active(false)
+                .displayOrder(2)
+                .build();
+                        
+        products.add(testProductDTO);
+        products.add(testProductDTO2);
     }
 
     @Test
     void testGetByPageProduct_Success() throws Exception {
         // Arrange
-        Page<ProductDTO> page = new PageImpl<>(Arrays.asList(testProductDTO));
+
+
+        Page<ProductDTO> page = new PageImpl<>(products);
         when(productService.findByPage(any())).thenReturn(page);
 
         // Act & Assert
-        mockMvc.perform(get("/api/products/page")
+        mockMvc.perform(get(BASED_URL+"page")
                 .param("page", "0")
                 .param("size", "20")
                 .param("sort", "id,asc")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].name", equalTo("Test Product")));
 
         verify(productService, times(1)).findByPage(any());
@@ -75,48 +99,17 @@ class ProductControllerTest {
 
     @Test
     void testGetAllProduct_Success() throws Exception {
-        // Arrange
-        List<ProductDTO> products = Arrays.asList(testProductDTO);
+        //arrange
         when(productService.findALL()).thenReturn(products);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/products/")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", equalTo("Test Product")));
+        mockMvc.perform(get(BASED_URL)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())        
+                        .andExpect(jsonPath("$", hasSize(2)));
+        
+        verify(productService,times(1)).findALL();
 
-        verify(productService, times(1)).findALL();
     }
-
-    @Test
-    void testGetProductById_Success() throws Exception {
-        // Arrange
-        when(productService.findById(1L)).thenReturn(Optional.of(testProductDTO));
-
-        // Act & Assert
-        mockMvc.perform(get("/api/products/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Test Product")))
-                .andExpect(jsonPath("$.id", equalTo(1)));
-
-        verify(productService, times(1)).findById(1L);
-    }
-
-    @Test
-    void testGetProductById_NotFound() throws Exception {
-        // Arrange
-        when(productService.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        mockMvc.perform(get("/api/products/999")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-
-        verify(productService, times(1)).findById(999L);
-    }
-
     @Test
     void testCreateProduct_Success() throws Exception {
         // Arrange
@@ -163,6 +156,43 @@ class ProductControllerTest {
     }
 
     @Test
+    public void testGetProductById_Success() throws Exception {
+    // Arrange
+    Long productId = 1L;
+    ProductDTO expectedProduct = ProductDTO.builder()
+            .id(productId)
+            .name("Test product")
+            .category(Category.BIOSTIMULANT)
+            .build();
+    
+    when(productService.findById(productId)).thenReturn(Optional.of(expectedProduct));
+
+    // Act & Assert
+    mockMvc.perform(get(BASED_URL + "/{id}", productId))  // Meilleure pratique avec placeholder
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", equalTo(productId.intValue())))
+            .andExpect(jsonPath("$.name", equalTo("Test product")))
+            .andExpect(jsonPath("$.category", equalTo("BIOSTIMULANT")));
+
+    // Verify
+    verify(productService, times(1)).findById(productId);
+    }
+
+    @Test
+    public void testGetProductById_NotFound() throws Exception {
+    // Arrange
+    Long nonExistentId = 999L;
+    when(productService.findById(nonExistentId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    mockMvc.perform(get(BASED_URL + "/{id}", nonExistentId))
+            .andExpect(status().isNotFound());
+
+    // Verify
+    verify(productService, times(1)).findById(nonExistentId);
+    }
+
+    @Test
     void testUpdateProduct_Success() throws Exception {
         // Arrange
         ProductDTO updateDTO = ProductDTO.builder()
@@ -203,5 +233,36 @@ class ProductControllerTest {
 
         verify(productService, times(1)).delete(1L);
     }
+    @Test
+    public void testDeleteProduct_DataIntegrityViolation() throws Exception {
+        // Arrange
+        Long productId = 1L;
+        
+        // Simule une violation de contrainte (ex: produit référencé ailleurs)
+        doThrow(new DataIntegrityViolationException(""))
+            .when(productService).delete(productId);
+
+        // Act & Assert
+        mockMvc.perform(delete(BASED_URL + "/{id}", productId))
+                .andExpect(status().isConflict()) // 409 Conflict
+                .andExpect(jsonPath("$.error").value(containsString("Database constraint violated")));
+
+        verify(productService, times(1)).delete(productId);
+    }
+    @Test
+    public void testDeleteProduct_NotFound() throws Exception {
+        // Arrange
+        Long nonExistentId = 999L;
+
+    
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found with ID: "+nonExistentId))
+                .when(productService).delete(nonExistentId);
+
+        // Act & Assert
+        mockMvc.perform(delete(BASED_URL + "/{id}", nonExistentId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error",equalTo("Product not found with ID: "+nonExistentId)));
+
+        verify(productService, times(1)).delete(nonExistentId);
+    }
 }
-*/

@@ -21,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.atlashorticole.product_service.Mapper.ProductMapper;
 import com.atlashorticole.product_service.domain.Category;
@@ -188,8 +190,26 @@ class ProductServiceImplTest {
 
     @Test
     void testDeleteSuccess() {
-        productService.delete(1L);
 
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(testProduct));
+         productService.delete(1L);
+
+        verify(productRepository, times(1)).findById(1L);
         verify(productRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testDeleteNotFound(){
+
+        
+        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,()-> productService.delete(999L));
+        
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        assertEquals("Product not found with ID: 999", exception.getReason());       
+        verify(productRepository, times(1)).findById(999L);
+        verify(productRepository, never()).deleteById(any());
     }
 }
