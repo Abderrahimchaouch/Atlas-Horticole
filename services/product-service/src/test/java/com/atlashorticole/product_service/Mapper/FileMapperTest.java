@@ -1,12 +1,15 @@
 package com.atlashorticole.product_service.Mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
+
 import com.atlashorticole.product_service.domain.File;
 import com.atlashorticole.product_service.domain.FileType;
 import com.atlashorticole.product_service.domain.Product;
 import com.atlashorticole.product_service.dto.FileDTO;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileMapperTest {
 
@@ -16,7 +19,7 @@ class FileMapperTest {
     void toDto_WithValidFile_ShouldMapAllFieldsCorrectly() {
         // Arrange
         Product product = Product.builder().id(100L).name("Test Product").build();
-        
+
         File file = File.builder()
                 .id(1L)
                 .originalName("test.pdf")

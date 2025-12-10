@@ -1,5 +1,9 @@
 package com.atlashorticole.product_service;
 
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +13,17 @@ import org.springframework.test.context.ActiveProfiles;
 
 import jakarta.transaction.Transactional;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
-
 @SpringBootTest // Launch the entire Spring context
 @ActiveProfiles("test") // load application-test.yml
-@Transactional //important : Cancel everything after the test
+@Transactional // important : Cancel everything after the test
 public abstract class AbstractIntegrationTest {
-    
+
     @Autowired
     protected DataSource dataSource;
-    
+
     @Autowired
     protected JdbcTemplate jdbcTemplate;
-    
+
     @BeforeEach
     void setUp() throws SQLException {
         // Verify that the database connection is working
@@ -30,7 +31,7 @@ public abstract class AbstractIntegrationTest {
             System.out.println("Test database connected: " + connection.getMetaData().getURL());
         }
     }
-    
+
     @AfterEach
     void tearDown() {
         // Clean Up the tables if necessairy

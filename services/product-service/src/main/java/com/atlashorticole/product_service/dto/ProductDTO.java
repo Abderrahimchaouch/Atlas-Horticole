@@ -1,5 +1,5 @@
 package com.atlashorticole.product_service.dto;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import com.atlashorticole.product_service.domain.Category;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProductDTO{
+public class ProductDTO {
 
     private Long id;
 
@@ -32,7 +32,6 @@ public class ProductDTO{
     private String dosage;
 
     private String composition;
-
 
     private List<FileDTO> files;
     private Integer displayOrder;

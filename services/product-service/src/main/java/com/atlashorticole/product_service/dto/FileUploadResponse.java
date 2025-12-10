@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 public class FileUploadResponse {
     private String fileName;
     private String fileUrl;
-    private String fileType;  // "image" or "pdf"
-    private Long fileSize;    //  bytes
+    private String fileType; // "image" or "pdf"
+    private Long fileSize; // bytes
     private String message;
-    private String publicId;  // ID Cloudinary for suppression
+    private String publicId; // ID Cloudinary for suppression
 }

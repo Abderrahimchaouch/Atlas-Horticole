@@ -29,12 +29,12 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    private Long id;
 
     @NotBlank
     private String name;
 
-    @Column(columnDefinition  = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(columnDefinition = "TEXT")
@@ -50,7 +50,8 @@ public class Product {
     @Column(nullable = false)
     private Category category;
 
-    // Controls the position of the product when displayed in lists (lower value = higher priority)
+    // Controls the position of the product when displayed in lists (lower value =
+    // higher priority)
     private Integer displayOrder;
 
     @Builder.Default
@@ -59,12 +60,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<File> files = new ArrayList<>();
-    
-    public void addFile(File file){
+
+    public void addFile(File file) {
         this.files.add(file);
-         file.setProduct(this);
-    } 
-
-
+        file.setProduct(this);
+    }
 
 }

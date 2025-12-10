@@ -16,22 +16,27 @@ public interface ProductService {
     ProductDTO createNewProduct(ProductDTO dto);
 
     Optional<ProductDTO> findById(Long id);
+
     Page<ProductDTO> findByPage(Pageable page);
-    List<ProductDTO>  findALL();
-    Page<ProductDTO> findByCategory(Category category,Pageable page);
-    ProductDTO updateProduct(Long id , ProductDTO dto);
+
+    List<ProductDTO> findALL();
+
+    Page<ProductDTO> findByCategory(Category category, Pageable page);
+
+    ProductDTO updateProduct(Long id, ProductDTO dto);
+
     void delete(Long id);
+
     Optional<ProductDTO> findByIdWithFiles(Long id);
+
     /**
      * Creates a product with a single file.
      */
     ProductDTO createProductWithFile(ProductDTO dto, MultipartFile file, FileType fileType);
-    
+
     /**
      * Creates a product with multiple files.
      */
     ProductDTO createProductWithFiles(ProductDTO dto, List<MultipartFile> files, List<FileType> fileTypes);
-    
 
-    
 }

@@ -1,7 +1,6 @@
 package com.atlashorticole.product_service.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service implementation for Product management operations.
- * Handles CRUD operations, pagination, filtering by category, 
+ * Handles CRUD operations, pagination, filtering by category,
  * and integration with Cloudinary for file management.
  */
 @Slf4j
@@ -37,18 +36,19 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final CloudinaryService cloudinaryService;
     private final FileService fileService;
+
     /**
      * Constructor for dependency injection.
      * 
      * @param productRepository Repository for product data access
-     * @param mapper Mapper for converting between Product and ProductDTO
+     * @param mapper            Mapper for converting between Product and ProductDTO
      * @param cloudinaryService Service for Cloudinary file operations
      * @param fileService
      */
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, 
-                              ProductMapper mapper,
-                              CloudinaryService cloudinaryService, FileService fileService) {
+    public ProductServiceImpl(ProductRepository productRepository,
+            ProductMapper mapper,
+            CloudinaryService cloudinaryService, FileService fileService) {
         this.productRepository = productRepository;
         this.mapper = mapper;
         this.cloudinaryService = cloudinaryService;
@@ -116,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
      * Retrieves products filtered by category with pagination.
      * 
      * @param category Product category filter
-     * @param page Pagination information
+     * @param page     Pagination information
      * @return Page of ProductDTOs in the specified category
      */
     @Override
@@ -127,7 +127,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Updates an existing product.
      * 
-     * @param id Product identifier to update
+     * @param id  Product identifier to update
      * @param dto Updated product data
      * @return Updated ProductDTO
      * @throws IllegalArgumentException if product not found
@@ -136,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO updateProduct(Long id, ProductDTO dto) {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
-            String file = dto.getFiles()!=null?" non":"oui";
+        String file = dto.getFiles() != null ? " non" : "oui";
         mapper.updateEntityFromDto(dto, existingProduct);
         Product savedProduct = productRepository.save(existingProduct);
         return mapper.toDto(savedProduct);
@@ -152,16 +152,15 @@ public class ProductServiceImpl implements ProductService {
     public void delete(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, 
-                    "Product not found with ID: " + id
-                ));
-        
+                        HttpStatus.NOT_FOUND,
+                        "Product not found with ID: " + id));
+
         // Delete associated files from Cloudinary
         for (File file : product.getFiles()) {
             String resourceType = file.getFileType() == FileType.PDF ? "raw" : "image";
             cloudinaryService.deleteFile(file.getPublicId(), resourceType);
         }
-        
+
         // Delete product from database (files will be deleted by cascade)
         productRepository.delete(product);
     }
@@ -178,85 +177,85 @@ public class ProductServiceImpl implements ProductService {
                 .map(mapper::toDto);
     }
 
-/**
- * Creates a new product with a single attached file.
- * 
- * @param dto Product data transfer object containing product information
- * @param file Multipart file to be uploaded and associated with the product
- * @param fileType Type of the file (IMAGE or PDF) as defined in FileType enum
- * @return Complete ProductDTO with uploaded file information
- */
-@Override
-@Transactional
-public ProductDTO createProductWithFile(ProductDTO dto, MultipartFile file, FileType fileType) {
-    if (dto == null) {
-        throw new IllegalArgumentException("ProductDTO cannot be null");
+    /**
+     * Creates a new product with a single attached file.
+     * 
+     * @param dto      Product data transfer object containing product information
+     * @param file     Multipart file to be uploaded and associated with the product
+     * @param fileType Type of the file (IMAGE or PDF) as defined in FileType enum
+     * @return Complete ProductDTO with uploaded file information
+     */
+    @Override
+    @Transactional
+    public ProductDTO createProductWithFile(ProductDTO dto, MultipartFile file, FileType fileType) {
+        if (dto == null) {
+            throw new IllegalArgumentException("ProductDTO cannot be null");
+        }
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be null or empty");
+        }
+        if (fileType == null) {
+            throw new IllegalArgumentException("FileType cannot be null");
+        }
+
+        // 1. Create product
+        ProductDTO product = createNewProduct(dto);
+
+        // 2. Upload file
+        FileDTO fileDTO = fileService.uploadFile(file, fileType, product.getId());
+
+        // 3. Return product with files
+        return findById(product.getId()).orElseThrow(
+                () -> new RuntimeException("Failed to retrieve created product"));
     }
-    if (file == null || file.isEmpty()) {
-        throw new IllegalArgumentException("File cannot be null or empty");
-    }
-    if (fileType == null) {
-        throw new IllegalArgumentException("FileType cannot be null");
-    }
-    
-    // 1. Create product
-    ProductDTO product = createNewProduct(dto);
-    
-    // 2. Upload file
-    FileDTO fileDTO = fileService.uploadFile(file, fileType, product.getId());
-    
-    // 3. Return product with files
-    return findById(product.getId()).orElseThrow(
-        () -> new RuntimeException("Failed to retrieve created product")
-    );
-}
-/**
- * Creates a new product with multiple attached files.
- * This method handles batch file uploads and ensures transactional consistency -
- * if any file upload fails, the entire operation is rolled back.
- * 
- * @param dto Product data transfer object containing product information
- * @param files List of Multipart files to be uploaded
- * @param fileTypes List of file types corresponding to each file
- */
-@Override
-@Transactional
-public ProductDTO createProductWithFiles(ProductDTO dto, List<MultipartFile> files, List<FileType> fileTypes) {
-    if (dto == null) {
-        throw new IllegalArgumentException("ProductDTO cannot be null");
-    }
-    if (files == null || fileTypes == null) {
-        throw new IllegalArgumentException("Files and fileTypes cannot be null");
-    }
-    if (files.size() != fileTypes.size()) {
-        throw new IllegalArgumentException("Files and fileTypes must have the same size");
-    }
-    
-       ProductDTO createdProduct = createNewProduct(dto);
-    
-    if (createdProduct == null) {
-        throw new RuntimeException("Failed to create product");
-    }
-    
-    Long productId = createdProduct.getId();
-    
-    // 2. Upload all files...
-    for (int i = 0; i < files.size(); i++) {
-        if (files.get(i) != null && !files.get(i).isEmpty()) {
-            try {
-                fileService.uploadFile(files.get(i), fileTypes.get(i), productId);
-            } catch (Exception e) {
-                // Delete product if file upload fails
-                productRepository.deleteById(productId);
-                throw new RuntimeException("Failed to upload file: " + files.get(i).getOriginalFilename(), e);
+
+    /**
+     * Creates a new product with multiple attached files.
+     * This method handles batch file uploads and ensures transactional consistency
+     * -
+     * if any file upload fails, the entire operation is rolled back.
+     * 
+     * @param dto       Product data transfer object containing product information
+     * @param files     List of Multipart files to be uploaded
+     * @param fileTypes List of file types corresponding to each file
+     */
+    @Override
+    @Transactional
+    public ProductDTO createProductWithFiles(ProductDTO dto, List<MultipartFile> files, List<FileType> fileTypes) {
+        if (dto == null) {
+            throw new IllegalArgumentException("ProductDTO cannot be null");
+        }
+        if (files == null || fileTypes == null) {
+            throw new IllegalArgumentException("Files and fileTypes cannot be null");
+        }
+        if (files.size() != fileTypes.size()) {
+            throw new IllegalArgumentException("Files and fileTypes must have the same size");
+        }
+
+        ProductDTO createdProduct = createNewProduct(dto);
+
+        if (createdProduct == null) {
+            throw new RuntimeException("Failed to create product");
+        }
+
+        Long productId = createdProduct.getId();
+
+        // 2. Upload all files...
+        for (int i = 0; i < files.size(); i++) {
+            if (files.get(i) != null && !files.get(i).isEmpty()) {
+                try {
+                    fileService.uploadFile(files.get(i), fileTypes.get(i), productId);
+                } catch (Exception e) {
+                    // Delete product if file upload fails
+                    productRepository.deleteById(productId);
+                    throw new RuntimeException("Failed to upload file: " + files.get(i).getOriginalFilename(), e);
+                }
             }
         }
+
+        // 3. Return complete product
+        return findById(productId).orElseThrow(
+                () -> new RuntimeException("Failed to retrieve created product"));
     }
-    
-    // 3. Return complete product
-    return findById(productId).orElseThrow(
-        () -> new RuntimeException("Failed to retrieve created product")
-    );
-}
 
 }

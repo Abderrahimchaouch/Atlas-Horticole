@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="files")
+@Table(name = "files")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,10 +29,10 @@ public class File {
     private Long id;
 
     private String originalName;
-    
-    @Column(columnDefinition  = "TEXT")
+
+    @Column(columnDefinition = "TEXT")
     private String fileUrl;
-    @Column(columnDefinition  = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String publicId;
 
     private Long size;
@@ -41,7 +41,7 @@ public class File {
     private FileType fileType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "product_id")
+    @JoinColumn(name = "product_id")
     private Product product;
-    
+
 }

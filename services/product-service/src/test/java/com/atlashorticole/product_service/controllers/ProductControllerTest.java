@@ -1,12 +1,24 @@
 package com.atlashorticole.product_service.controllers;
 
-import com.atlashorticole.product_service.domain.Category;
-import com.atlashorticole.product_service.domain.FileType;
-import com.atlashorticole.product_service.dto.FileDTO;
-import com.atlashorticole.product_service.dto.ProductDTO;
-import com.atlashorticole.product_service.services.FileService;
-import com.atlashorticole.product_service.services.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,220 +30,218 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.atlashorticole.product_service.domain.Category;
+import com.atlashorticole.product_service.domain.FileType;
+import com.atlashorticole.product_service.dto.FileDTO;
+import com.atlashorticole.product_service.dto.ProductDTO;
+import com.atlashorticole.product_service.services.FileService;
+import com.atlashorticole.product_service.services.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = ProductController.class)
 class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockitoBean
-    private ProductService productService;
+        @MockitoBean
+        private ProductService productService;
 
-    @MockitoBean
-    private FileService fileService;
+        @MockitoBean
+        private FileService fileService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private final String BASE_URL = "/api/products";
+        private final String BASE_URL = "/api/products";
 
-    private ProductDTO testProductDTO;
-    private FileDTO testFileDTO;
+        private ProductDTO testProductDTO;
+        private FileDTO testFileDTO;
 
-    @BeforeEach
-    public void setUp() {
-        testProductDTO = ProductDTO.builder()
-                .id(1L)
-                .name("Test Product")
-                .category(Category.BIOSTIMULANT)
-                .active(true)
-                .build();
+        @BeforeEach
+        public void setUp() {
+                testProductDTO = ProductDTO.builder()
+                                .id(1L)
+                                .name("Test Product")
+                                .category(Category.BIOSTIMULANT)
+                                .active(true)
+                                .build();
 
-        testFileDTO = FileDTO.builder()
-                .id(1L)
-                .originalName("test.jpg")
-                .fileType(FileType.IMAGE)
-                .productId(1L)
-                .build();
-    }
+                testFileDTO = FileDTO.builder()
+                                .id(1L)
+                                .originalName("test.jpg")
+                                .fileType(FileType.IMAGE)
+                                .productId(1L)
+                                .build();
+        }
 
-    // ========== BASIC CRUD TESTS ==========
+        // ========== BASIC CRUD TESTS ==========
 
-    @Test
-    public void createProduct_ShouldCreateProduct() throws Exception {
-        ProductDTO createDTO = ProductDTO.builder()
-                .name("New Product")
-                .category(Category.AMENDMENT)
-                .build();
+        @Test
+        public void createProduct_ShouldCreateProduct() throws Exception {
+                ProductDTO createDTO = ProductDTO.builder()
+                                .name("New Product")
+                                .category(Category.AMENDMENT)
+                                .build();
 
-        ProductDTO createdDTO = ProductDTO.builder()
-                .id(2L)
-                .name("New Product")
-                .category(Category.AMENDMENT)
-                .build();
+                ProductDTO createdDTO = ProductDTO.builder()
+                                .id(2L)
+                                .name("New Product")
+                                .category(Category.AMENDMENT)
+                                .build();
 
-        when(productService.createNewProduct(any())).thenReturn(createdDTO);
+                when(productService.createNewProduct(any())).thenReturn(createdDTO);
 
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", equalTo(2)))
-                .andExpect(jsonPath("$.name", equalTo("New Product")));
+                mockMvc.perform(post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createDTO)))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.id", equalTo(2)))
+                                .andExpect(jsonPath("$.name", equalTo("New Product")));
 
-        verify(productService).createNewProduct(any());
-    }
+                verify(productService).createNewProduct(any());
+        }
 
-    @Test
-    public void getProductById_ShouldReturnProduct() throws Exception {
-        when(productService.findById(1L)).thenReturn(Optional.of(testProductDTO));
+        @Test
+        public void getProductById_ShouldReturnProduct() throws Exception {
+                when(productService.findById(1L)).thenReturn(Optional.of(testProductDTO));
 
-        mockMvc.perform(get(BASE_URL + "/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo("Test Product")));
+                mockMvc.perform(get(BASE_URL + "/{id}", 1L))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id", equalTo(1)))
+                                .andExpect(jsonPath("$.name", equalTo("Test Product")));
 
-        verify(productService).findById(1L);
-    }
+                verify(productService).findById(1L);
+        }
 
-    @Test
-    public void getProductById_NotFound_ShouldReturn404() throws Exception {
-        when(productService.findById(999L)).thenReturn(Optional.empty());
+        @Test
+        public void getProductById_NotFound_ShouldReturn404() throws Exception {
+                when(productService.findById(999L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(BASE_URL + "/{id}", 999L))
-                .andExpect(status().isNotFound());
+                mockMvc.perform(get(BASE_URL + "/{id}", 999L))
+                                .andExpect(status().isNotFound());
 
-        verify(productService).findById(999L);
-    }
+                verify(productService).findById(999L);
+        }
 
-    @Test
-    public void getAllProducts_ShouldReturnProductList() throws Exception {
-        when(productService.findALL()).thenReturn(List.of(testProductDTO));
+        @Test
+        public void getAllProducts_ShouldReturnProductList() throws Exception {
+                when(productService.findALL()).thenReturn(List.of(testProductDTO));
 
-        mockMvc.perform(get(BASE_URL))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", equalTo("Test Product")));
+                mockMvc.perform(get(BASE_URL))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].name", equalTo("Test Product")));
 
-        verify(productService).findALL();
-    }
+                verify(productService).findALL();
+        }
 
-    @Test
-    public void updateProduct_ShouldUpdateProduct() throws Exception {
-        ProductDTO updateDTO = ProductDTO.builder()
-                .name("Updated Product")
-                .category(Category.CORRECTOR)
-                .build();
+        @Test
+        public void updateProduct_ShouldUpdateProduct() throws Exception {
+                ProductDTO updateDTO = ProductDTO.builder()
+                                .name("Updated Product")
+                                .category(Category.CORRECTOR)
+                                .build();
 
-        ProductDTO updatedDTO = ProductDTO.builder()
-                .id(1L)
-                .name("Updated Product")
-                .category(Category.CORRECTOR)
-                .build();
+                ProductDTO updatedDTO = ProductDTO.builder()
+                                .id(1L)
+                                .name("Updated Product")
+                                .category(Category.CORRECTOR)
+                                .build();
 
-        when(productService.updateProduct(1L, updateDTO)).thenReturn(updatedDTO);
+                when(productService.updateProduct(1L, updateDTO)).thenReturn(updatedDTO);
 
-        mockMvc.perform(put(BASE_URL + "/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Updated Product")));
+                mockMvc.perform(put(BASE_URL + "/{id}", 1L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateDTO)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.name", equalTo("Updated Product")));
 
-        verify(productService).updateProduct(1L, updateDTO);
-    }
+                verify(productService).updateProduct(1L, updateDTO);
+        }
 
-    @Test
-    public void deleteProduct_ShouldDeleteProduct() throws Exception {
-        doNothing().when(productService).delete(1L);
+        @Test
+        public void deleteProduct_ShouldDeleteProduct() throws Exception {
+                doNothing().when(productService).delete(1L);
 
-        mockMvc.perform(delete(BASE_URL + "/{id}", 1L))
-                .andExpect(status().isNoContent());
+                mockMvc.perform(delete(BASE_URL + "/{id}", 1L))
+                                .andExpect(status().isNoContent());
 
-        verify(productService).delete(1L);
-    }
+                verify(productService).delete(1L);
+        }
 
-    // ========== BASIC FILE OPERATIONS ==========
+        // ========== BASIC FILE OPERATIONS ==========
 
-    @Test
-    public void uploadFileToProduct_ShouldUploadFile() throws Exception {
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                "image/jpeg",
-                "content".getBytes()
-        );
+        @Test
+        public void uploadFileToProduct_ShouldUploadFile() throws Exception {
+                MockMultipartFile file = new MockMultipartFile(
+                                "file",
+                                "test.jpg",
+                                "image/jpeg",
+                                "content".getBytes());
 
-        when(fileService.uploadFile(any(), eq(FileType.IMAGE), eq(1L)))
-                .thenReturn(testFileDTO);
+                when(fileService.uploadFile(any(), eq(FileType.IMAGE), eq(1L)))
+                                .thenReturn(testFileDTO);
 
-        mockMvc.perform(multipart(BASE_URL + "/{id}/upload-file", 1L)
-                        .file(file)
-                        .param("fileType", "IMAGE"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.originalName", equalTo("test.jpg")));
+                mockMvc.perform(multipart(BASE_URL + "/{id}/upload-file", 1L)
+                                .file(file)
+                                .param("fileType", "IMAGE"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.originalName", equalTo("test.jpg")));
 
-        verify(fileService).uploadFile(any(), any(), eq(1L));
-    }
+                verify(fileService).uploadFile(any(), any(), eq(1L));
+        }
 
-    @Test
-    public void getProductFiles_ShouldReturnFiles() throws Exception {
-        when(fileService.getFilesByProductId(1L)).thenReturn(List.of(testFileDTO));
+        @Test
+        public void getProductFiles_ShouldReturnFiles() throws Exception {
+                when(fileService.getFilesByProductId(1L)).thenReturn(List.of(testFileDTO));
 
-        mockMvc.perform(get(BASE_URL + "/{id}/files", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].originalName", equalTo("test.jpg")));
+                mockMvc.perform(get(BASE_URL + "/{id}/files", 1L))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].originalName", equalTo("test.jpg")));
 
-        verify(fileService).getFilesByProductId(1L);
-    }
+                verify(fileService).getFilesByProductId(1L);
+        }
 
-    @Test
-    public void deleteProductFile_ShouldDeleteFile() throws Exception {
-        doNothing().when(fileService).deleteFile(1L);
+        @Test
+        public void deleteProductFile_ShouldDeleteFile() throws Exception {
+                doNothing().when(fileService).deleteFile(1L);
 
-        mockMvc.perform(delete(BASE_URL + "/{id}/files/{fileId}", 1L, 1L))
-                .andExpect(status().isNoContent());
+                mockMvc.perform(delete(BASE_URL + "/{id}/files/{fileId}", 1L, 1L))
+                                .andExpect(status().isNoContent());
 
-        verify(fileService).deleteFile(1L);
-    }
+                verify(fileService).deleteFile(1L);
+        }
 
-    // ========== BASIC PAGINATION ==========
+        // ========== BASIC PAGINATION ==========
 
-    @Test
-    public void getProductsByPage_ShouldReturnPaginatedProducts() throws Exception {
-        Page<ProductDTO> page = new PageImpl<>(List.of(testProductDTO));
-        when(productService.findByPage(any())).thenReturn(page);
+        @Test
+        public void getProductsByPage_ShouldReturnPaginatedProducts() throws Exception {
+                Page<ProductDTO> page = new PageImpl<>(List.of(testProductDTO));
+                when(productService.findByPage(any())).thenReturn(page);
 
-        mockMvc.perform(get(BASE_URL + "/page")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)));
+                mockMvc.perform(get(BASE_URL + "/page")
+                                .param("page", "0")
+                                .param("size", "10"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content", hasSize(1)));
 
-        verify(productService).findByPage(any());
-    }
+                verify(productService).findByPage(any());
+        }
 
-    // ========== BASIC ERROR CASES ==========
+        // ========== BASIC ERROR CASES ==========
 
-    @Test
-    public void createProduct_InvalidData_ShouldReturn400() throws Exception {
-        ProductDTO invalidDTO = ProductDTO.builder().build(); // Missing required fields
+        @Test
+        public void createProduct_InvalidData_ShouldReturn400() throws Exception {
+                ProductDTO invalidDTO = ProductDTO.builder().build(); // Missing required fields
 
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDTO)))
-                .andExpect(status().isBadRequest());
+                mockMvc.perform(post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(invalidDTO)))
+                                .andExpect(status().isBadRequest());
 
-        verify(productService, never()).createNewProduct(any());
-    }
+                verify(productService, never()).createNewProduct(any());
+        }
 
 }

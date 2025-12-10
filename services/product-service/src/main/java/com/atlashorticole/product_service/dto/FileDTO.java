@@ -1,6 +1,7 @@
 package com.atlashorticole.product_service.dto;
 
 import com.atlashorticole.product_service.domain.FileType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.atlashorticole.product_service.domain;
 
-public  enum FileType {
+public enum FileType {
     PDF,
     IMAGE,
-    DOCUMENTS 
+    DOCUMENTS
 }

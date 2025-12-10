@@ -3,14 +3,13 @@ package com.atlashorticole.product_service.errors;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,24 +24,22 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(err ->
-            errors.put(err.getField(), err.getDefaultMessage())
-        );
+        ex.getBindingResult().getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
-        
+
         Map<String, String> errors = new HashMap<>();
-        
+
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            String fieldName = violation.getPropertyPath().toString(); 
-            String errorMessage = violation.getMessage(); 
-            
+            String fieldName = violation.getPropertyPath().toString();
+            String errorMessage = violation.getMessage();
+
             errors.put(fieldName, errorMessage);
         }
-        
+
         return ResponseEntity.badRequest().body(errors);
     }
 
