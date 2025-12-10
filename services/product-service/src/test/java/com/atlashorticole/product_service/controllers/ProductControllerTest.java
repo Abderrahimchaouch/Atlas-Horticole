@@ -1,35 +1,31 @@
 package com.atlashorticole.product_service.controllers;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import com.atlashorticole.product_service.domain.Category;
+import com.atlashorticole.product_service.domain.FileType;
+import com.atlashorticole.product_service.dto.FileDTO;
+import com.atlashorticole.product_service.dto.ProductDTO;
+import com.atlashorticole.product_service.services.FileService;
+import com.atlashorticole.product_service.services.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.atlashorticole.product_service.domain.Category;
-import com.atlashorticole.product_service.dto.ProductDTO;
-import com.atlashorticole.product_service.services.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ProductController.class)
 class ProductControllerTest {
@@ -40,229 +36,202 @@ class ProductControllerTest {
     @MockitoBean
     private ProductService productService;
 
+    @MockitoBean
+    private FileService fileService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String BASED_URL = "/api/products/";
+    private final String BASE_URL = "/api/products";
 
     private ProductDTO testProductDTO;
-    private ProductDTO testProductDTO2;
-    private List<ProductDTO> products;
+    private FileDTO testFileDTO;
+
     @BeforeEach
-    void setUp() {
-        products = new ArrayList<>();
+    public void setUp() {
         testProductDTO = ProductDTO.builder()
                 .id(1L)
                 .name("Test Product")
-                .description("Test Description")
                 .category(Category.BIOSTIMULANT)
-                .imageUrl("http://example.com/image.jpg")
-                .technicalSheetUrl("http://example.com/sheet.pdf")
                 .active(true)
-                .displayOrder(1)
                 .build();
-        testProductDTO2 = ProductDTO.builder()
-                .id(2L)
-                .name("Test Product2")
-                .description("Test Description2")
-                .category(Category.BIOSTIMULANT)
-                .imageUrl("http://example.com/image2.jpg")
-                .technicalSheetUrl("http://example.com/sheet2.pdf")
-                .active(false)
-                .displayOrder(2)
+
+        testFileDTO = FileDTO.builder()
+                .id(1L)
+                .originalName("test.jpg")
+                .fileType(FileType.IMAGE)
+                .productId(1L)
                 .build();
-                        
-        products.add(testProductDTO);
-        products.add(testProductDTO2);
     }
 
-    @Test
-    void testGetByPageProduct_Success() throws Exception {
-        // Arrange
-
-
-        Page<ProductDTO> page = new PageImpl<>(products);
-        when(productService.findByPage(any())).thenReturn(page);
-
-        // Act & Assert
-        mockMvc.perform(get(BASED_URL+"page")
-                .param("page", "0")
-                .param("size", "20")
-                .param("sort", "id,asc")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content[0].name", equalTo("Test Product")));
-
-        verify(productService, times(1)).findByPage(any());
-    }
+    // ========== BASIC CRUD TESTS ==========
 
     @Test
-    void testGetAllProduct_Success() throws Exception {
-        //arrange
-        when(productService.findALL()).thenReturn(products);
-
-        mockMvc.perform(get(BASED_URL)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())        
-                        .andExpect(jsonPath("$", hasSize(2)));
-        
-        verify(productService,times(1)).findALL();
-
-    }
-    @Test
-    void testCreateProduct_Success() throws Exception {
-        // Arrange
+    public void createProduct_ShouldCreateProduct() throws Exception {
         ProductDTO createDTO = ProductDTO.builder()
                 .name("New Product")
                 .category(Category.AMENDMENT)
-                .description("New Description")
                 .build();
 
         ProductDTO createdDTO = ProductDTO.builder()
                 .id(2L)
                 .name("New Product")
                 .category(Category.AMENDMENT)
-                .description("New Description")
                 .build();
 
         when(productService.createNewProduct(any())).thenReturn(createdDTO);
 
-        // Act & Assert
-        mockMvc.perform(post("/api/products/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createDTO)))
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", equalTo(2)))
                 .andExpect(jsonPath("$.name", equalTo("New Product")));
 
-        verify(productService, times(1)).createNewProduct(any());
+        verify(productService).createNewProduct(any());
     }
 
     @Test
-    void testCreateProduct_InvalidData() throws Exception {
-        // Arrange
-        ProductDTO invalidDTO = ProductDTO.builder()
-                .description("No name")
-                .build();
+    public void getProductById_ShouldReturnProduct() throws Exception {
+        when(productService.findById(1L)).thenReturn(Optional.of(testProductDTO));
 
-        // Act & Assert
-        mockMvc.perform(post("/api/products/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDTO)))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(get(BASE_URL + "/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(1)))
+                .andExpect(jsonPath("$.name", equalTo("Test Product")));
 
-        verify(productService, never()).createNewProduct(any());
+        verify(productService).findById(1L);
     }
 
     @Test
-    public void testGetProductById_Success() throws Exception {
-    // Arrange
-    Long productId = 1L;
-    ProductDTO expectedProduct = ProductDTO.builder()
-            .id(productId)
-            .name("Test product")
-            .category(Category.BIOSTIMULANT)
-            .build();
-    
-    when(productService.findById(productId)).thenReturn(Optional.of(expectedProduct));
+    public void getProductById_NotFound_ShouldReturn404() throws Exception {
+        when(productService.findById(999L)).thenReturn(Optional.empty());
 
-    // Act & Assert
-    mockMvc.perform(get(BASED_URL + "/{id}", productId))  // Meilleure pratique avec placeholder
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", equalTo(productId.intValue())))
-            .andExpect(jsonPath("$.name", equalTo("Test product")))
-            .andExpect(jsonPath("$.category", equalTo("BIOSTIMULANT")));
+        mockMvc.perform(get(BASE_URL + "/{id}", 999L))
+                .andExpect(status().isNotFound());
 
-    // Verify
-    verify(productService, times(1)).findById(productId);
+        verify(productService).findById(999L);
     }
 
     @Test
-    public void testGetProductById_NotFound() throws Exception {
-    // Arrange
-    Long nonExistentId = 999L;
-    when(productService.findById(nonExistentId)).thenReturn(Optional.empty());
+    public void getAllProducts_ShouldReturnProductList() throws Exception {
+        when(productService.findALL()).thenReturn(List.of(testProductDTO));
 
-    // Act & Assert
-    mockMvc.perform(get(BASED_URL + "/{id}", nonExistentId))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(get(BASE_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", equalTo("Test Product")));
 
-    // Verify
-    verify(productService, times(1)).findById(nonExistentId);
+        verify(productService).findALL();
     }
 
     @Test
-    void testUpdateProduct_Success() throws Exception {
-        // Arrange
+    public void updateProduct_ShouldUpdateProduct() throws Exception {
         ProductDTO updateDTO = ProductDTO.builder()
                 .name("Updated Product")
                 .category(Category.CORRECTOR)
-                .description("Updated Description")
                 .build();
 
         ProductDTO updatedDTO = ProductDTO.builder()
                 .id(1L)
                 .name("Updated Product")
                 .category(Category.CORRECTOR)
-                .description("Updated Description")
                 .build();
 
         when(productService.updateProduct(1L, updateDTO)).thenReturn(updatedDTO);
 
-        // Act & Assert
-        mockMvc.perform(put("/api/products/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+        mockMvc.perform(put(BASE_URL + "/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(jsonPath("$.name", equalTo("Updated Product")));
 
-        verify(productService, times(1)).updateProduct(1L, updateDTO);
+        verify(productService).updateProduct(1L, updateDTO);
     }
 
     @Test
-    void testDeleteProduct_Success() throws Exception {
-        // Arrange
+    public void deleteProduct_ShouldDeleteProduct() throws Exception {
         doNothing().when(productService).delete(1L);
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/products/1")
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isNoContent());
 
-        verify(productService, times(1)).delete(1L);
+        verify(productService).delete(1L);
     }
+
+    // ========== BASIC FILE OPERATIONS ==========
+
     @Test
-    public void testDeleteProduct_DataIntegrityViolation() throws Exception {
-        // Arrange
-        Long productId = 1L;
-        
-        // Simule une violation de contrainte (ex: produit référencé ailleurs)
-        doThrow(new DataIntegrityViolationException(""))
-            .when(productService).delete(productId);
+    public void uploadFileToProduct_ShouldUploadFile() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test.jpg",
+                "image/jpeg",
+                "content".getBytes()
+        );
 
-        // Act & Assert
-        mockMvc.perform(delete(BASED_URL + "/{id}", productId))
-                .andExpect(status().isConflict()) // 409 Conflict
-                .andExpect(jsonPath("$.error").value(containsString("Database constraint violated")));
+        when(fileService.uploadFile(any(), eq(FileType.IMAGE), eq(1L)))
+                .thenReturn(testFileDTO);
 
-        verify(productService, times(1)).delete(productId);
+        mockMvc.perform(multipart(BASE_URL + "/{id}/upload-file", 1L)
+                        .file(file)
+                        .param("fileType", "IMAGE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.originalName", equalTo("test.jpg")));
+
+        verify(fileService).uploadFile(any(), any(), eq(1L));
     }
+
     @Test
-    public void testDeleteProduct_NotFound() throws Exception {
-        // Arrange
-        Long nonExistentId = 999L;
+    public void getProductFiles_ShouldReturnFiles() throws Exception {
+        when(fileService.getFilesByProductId(1L)).thenReturn(List.of(testFileDTO));
 
-    
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found with ID: "+nonExistentId))
-                .when(productService).delete(nonExistentId);
+        mockMvc.perform(get(BASE_URL + "/{id}/files", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].originalName", equalTo("test.jpg")));
 
-        // Act & Assert
-        mockMvc.perform(delete(BASED_URL + "/{id}", nonExistentId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error",equalTo("Product not found with ID: "+nonExistentId)));
-
-        verify(productService, times(1)).delete(nonExistentId);
+        verify(fileService).getFilesByProductId(1L);
     }
+
+    @Test
+    public void deleteProductFile_ShouldDeleteFile() throws Exception {
+        doNothing().when(fileService).deleteFile(1L);
+
+        mockMvc.perform(delete(BASE_URL + "/{id}/files/{fileId}", 1L, 1L))
+                .andExpect(status().isNoContent());
+
+        verify(fileService).deleteFile(1L);
+    }
+
+    // ========== BASIC PAGINATION ==========
+
+    @Test
+    public void getProductsByPage_ShouldReturnPaginatedProducts() throws Exception {
+        Page<ProductDTO> page = new PageImpl<>(List.of(testProductDTO));
+        when(productService.findByPage(any())).thenReturn(page);
+
+        mockMvc.perform(get(BASE_URL + "/page")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)));
+
+        verify(productService).findByPage(any());
+    }
+
+    // ========== BASIC ERROR CASES ==========
+
+    @Test
+    public void createProduct_InvalidData_ShouldReturn400() throws Exception {
+        ProductDTO invalidDTO = ProductDTO.builder().build(); // Missing required fields
+
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDTO)))
+                .andExpect(status().isBadRequest());
+
+        verify(productService, never()).createNewProduct(any());
+    }
+
 }

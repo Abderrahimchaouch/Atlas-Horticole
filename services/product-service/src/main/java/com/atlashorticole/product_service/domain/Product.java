@@ -1,5 +1,9 @@
 package com.atlashorticole.product_service.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -45,14 +50,20 @@ public class Product {
     @Column(nullable = false)
     private Category category;
 
-    private String technicalSheetUrl;
-
-    private String imageUrl;
-
     // Controls the position of the product when displayed in lists (lower value = higher priority)
     private Integer displayOrder;
 
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = true;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<File> files = new ArrayList<>();
+    
+    public void addFile(File file){
+        this.files.add(file);
+         file.setProduct(this);
+    } 
 
 
 

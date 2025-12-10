@@ -55,7 +55,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
         log.error("Constraint violation", ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Contrainte base de données violée"));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Database constraint violated"));
     }
 
     @ExceptionHandler(Exception.class)

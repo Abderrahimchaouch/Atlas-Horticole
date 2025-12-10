@@ -1,4 +1,7 @@
 package com.atlashorticole.product_service.dto;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.atlashorticole.product_service.domain.Category;
 
 import jakarta.validation.constraints.NotBlank;
@@ -30,12 +33,11 @@ public class ProductDTO{
 
     private String composition;
 
-    private String imageUrl;
 
-    private String technicalSheetUrl;
-
+    private List<FileDTO> files;
     private Integer displayOrder;
 
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = true;
 
 }

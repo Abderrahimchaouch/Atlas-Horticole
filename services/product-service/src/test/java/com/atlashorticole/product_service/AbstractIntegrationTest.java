@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @SpringBootTest // Launch the entire Spring context
-@ActiveProfiles("test") // laod application-test.yml
+@ActiveProfiles("test") // load application-test.yml
 @Transactional //important : Cancel everything after the test
 public abstract class AbstractIntegrationTest {
     

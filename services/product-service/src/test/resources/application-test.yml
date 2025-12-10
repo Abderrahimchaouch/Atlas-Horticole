@@ -26,7 +26,11 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
+cloudinary:
+  cloud-name: test-cloud-for-mocks
+  api-key: test-api-key-123
+  api-secret: test-api-secret-456
+  secure: false
 server:
   port: 0  # Port aléatoire pour éviter les conflits
 
