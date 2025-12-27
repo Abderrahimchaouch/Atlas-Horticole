@@ -1,0 +1,53 @@
+<section class="cta-banner">
+  <!-- Background with mountain pattern -->
+  <div class="cta-banner__background">
+    <div class="cta-banner__pattern"></div>
+  </div>
+
+  <div class="cta-banner__container">
+    <!-- Content -->
+    <div class="cta-banner__content">
+      <h2 class="cta-banner__title">{{ banner.title }}</h2>
+      <p class="cta-banner__description">{{ banner.description }}</p>
+
+      <div class="cta-banner__actions">
+        <a
+          [routerLink]="banner.primaryButton.route"
+          class="cta-banner__button cta-banner__button--primary"
+        >
+          {{ banner.primaryButton.text }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+        <a
+          [routerLink]="banner.secondaryButton.route"
+          class="cta-banner__button cta-banner__button--secondary"
+        >
+          {{ banner.secondaryButton.text }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Image/Illustration -->
+    <div class="cta-banner__image">
+      <div
+        class="cta-banner__image-placeholder"
+        [style.background-image]="
+          banner.imageUrl ? 'url(' + banner.imageUrl + ')' : null
+        "
+      >
+        <!-- Decorative elements -->
+        <div class="cta-banner__decoration cta-banner__decoration--1"></div>
+        <div class="cta-banner__decoration cta-banner__decoration--2"></div>
+        <div class="cta-banner__decoration cta-banner__decoration--3"></div>
+      </div>
+    </div>
+  </div>
+</section>

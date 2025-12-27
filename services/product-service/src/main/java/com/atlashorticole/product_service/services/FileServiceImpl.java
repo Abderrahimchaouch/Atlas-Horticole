@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.atlashorticole.product_service.Mapper.FileMapper;
-import com.atlashorticole.product_service.Mapper.ProductMapper;
 import com.atlashorticole.product_service.domain.File;
 import com.atlashorticole.product_service.domain.FileType;
 import com.atlashorticole.product_service.domain.Product;
@@ -28,8 +27,6 @@ public class FileServiceImpl implements FileService {
     private final ProductRepository productRepository;
     private final CloudinaryService cloudinaryService;
     private final FileMapper fileMapper;
-    private final ProductMapper productMapper;
-    private final ProductService productService;
 
     @Override
     @Transactional

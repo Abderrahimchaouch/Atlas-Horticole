@@ -1,0 +1,44 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Service 1: PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: product-db
+    environment:
+      POSTGRES_DB: productdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Service 2: Ton application Spring Boot
+  app:
+    #build: .
+    image: product-service:1.0
+    container_name: product-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/productdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      CLOUDINARY_CLOUD_NAME: dxuieknnp
+      CLOUDINARY_API_KEY: 298144353172697
+      CLOUDINARY_API_SECRET: ZXN7dxlARrkaP7yidtXqWJ1OUB0
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+# Volume pour persister les données PostgreSQL
+volumes:
+  postgres_data:

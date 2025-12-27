@@ -1,0 +1,57 @@
+<section class="news">
+  <div class="news__container">
+    <!-- Header -->
+    <div class="news__header">
+      <div class="news__header-content">
+        <h2 class="news__title">{{ sectionTitle }}</h2>
+        <p class="news__subtitle">{{ sectionSubtitle }}</p>
+      </div>
+      <a [routerLink]="viewAllRoute" class="news__view-all">
+        Voir toutes les actualités
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="news__grid">
+      <article *ngFor="let article of articles" class="news-card">
+        <a [routerLink]="article.route" class="news-card__link">
+          <!-- Image -->
+          <div class="news-card__image">
+            <div
+              class="news-card__image-placeholder"
+              [style.background-image]="
+                article.imageUrl ? 'url(' + article.imageUrl + ')' : null
+              "
+            ></div>
+            <div class="news-card__category" *ngIf="article.category">
+              {{ article.category }}
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="news-card__content">
+            <time
+              class="news-card__date"
+              [dateTime]="article.date.toISOString()"
+            >
+              {{ article.date | date : "dd MMMM yyyy" }}
+            </time>
+            <h3 class="news-card__title">{{ article.title }}</h3>
+            <p class="news-card__excerpt">{{ article.excerpt }}</p>
+            <span class="news-card__read-more">
+              Lire la suite
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </div>
+        </a>
+      </article>
+    </div>
+  </div>
+</section>

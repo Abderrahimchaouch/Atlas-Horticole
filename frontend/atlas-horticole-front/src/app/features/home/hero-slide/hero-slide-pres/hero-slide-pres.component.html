@@ -1,0 +1,82 @@
+<section class="hero">
+  <div class="hero__slider">
+    <!-- Slides -->
+    <div
+      class="hero__slide"
+      *ngFor="let slide of slides; let i = index"
+      [class.hero__slide--active]="i === currentSlideIndex"
+    >
+      <!-- Background -->
+      <div class="hero__background">
+        <div class="hero__overlay"></div>
+        <div
+          class="hero__bg-placeholder"
+          [style.background-image]="
+            slide.imageUrl ? 'url(' + slide.imageUrl + ')' : null
+          "
+        ></div>
+      </div>
+
+      <!-- Content -->
+      <div class="hero__content">
+        <div class="hero__container">
+          <span class="hero__subtitle" [@fadeInUp]>{{ slide.subtitle }}</span>
+          <h1 class="hero__title" [@fadeInUp]>{{ slide.title }}</h1>
+          <p class="hero__description" [@fadeInUp]>{{ slide.description }}</p>
+          <a [routerLink]="slide.ctaRoute" class="hero__cta" [@fadeInUp]>
+            {{ slide.ctaText }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide Indicators -->
+  <div class="hero__indicators">
+    <button
+      *ngFor="let slide of slides; let i = index"
+      type="button"
+      class="hero__indicator"
+      [class.hero__indicator--active]="i === currentSlideIndex"
+      (click)="onSlideChange(i)"
+      [attr.aria-label]="'Aller à la slide ' + (i + 1)"
+      [attr.aria-current]="i === currentSlideIndex"
+    ></button>
+  </div>
+
+  <!-- Search Bar -->
+  <form class="hero__search-bar" (ngSubmit)="onSearchSubmit()">
+    <div class="search-bar">
+      <svg
+        class="search-bar__icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+
+      <input
+        type="search"
+        class="search-bar__input"
+        placeholder="Que recherchez-vous ? (produits, solutions, conseils...)"
+        [value]="searchQuery"
+        (input)="onSearchInput($any($event.target).value)"
+        aria-label="Rechercher"
+      />
+
+      <button
+        type="submit"
+        class="search-bar__button"
+        [disabled]="!searchQuery.trim()"
+      >
+        Rechercher
+      </button>
+    </div>
+  </form>
+</section>

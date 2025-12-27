@@ -1,0 +1,181 @@
+<header class="header" [class.header--scrolled]="isScrolled">
+  <!-- Snow overlay effect -->
+  <div class="header__snow-overlay"></div>
+  <div class="header__mountain-silhouette"></div>
+
+  <div class="header__container">
+    <!-- Logo -->
+    <a routerLink="/" class="header__logo" (click)="onCloseMobileMenu()">
+      <div class="header__logo-icon">
+        <img src="images/logo.png" alt="" srcset="" />
+      </div>
+      <div class="header__logo-text">
+        <span class="header__logo-main">ATLAS HORTICOLE</span>
+        <span class="header__logo-sub">Monde d'Agriculture</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="header__nav">
+      <ul class="header__menu">
+        <li
+          *ngFor="let item of menuItems"
+          class="header__menu-item"
+          [class.header__menu-item--has-submenu]="item.children"
+        >
+          <!-- Menu without children -->
+          <a
+            *ngIf="!item.children"
+            [routerLink]="item.route"
+            routerLinkActive="header__menu-link--active"
+            class="header__menu-link"
+          >
+            {{ item.label }}
+          </a>
+
+          <!-- Menu with children -->
+          <div *ngIf="item.children" class="header__menu-dropdown">
+            <button class="header__menu-link header__menu-link--dropdown">
+              {{ item.label }}
+              <svg
+                class="header__dropdown-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <div class="header__submenu">
+              <div class="header__submenu-content">
+                <a
+                  *ngFor="let child of item.children"
+                  [routerLink]="child.route"
+                  class="header__submenu-link"
+                >
+                  {{ child.label }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Contact Info -->
+    <div class="header__contact">
+      <a href="tel:0665630727" class="header__contact-link">
+        <svg
+          class="header__contact-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+          ></path>
+        </svg>
+        <span class="header__contact-text">0665 63 07 27</span>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      class="header__mobile-toggle"
+      (click)="onToggleMobileMenu()"
+      [class.header__mobile-toggle--active]="isMobileMenuOpen"
+      aria-label="Toggle menu"
+    >
+      <span class="header__hamburger"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div
+    class="header__mobile-menu"
+    [class.header__mobile-menu--open]="isMobileMenuOpen"
+  >
+    <nav class="header__mobile-nav">
+      <ul class="header__mobile-list">
+        <li *ngFor="let item of menuItems" class="header__mobile-item">
+          <!-- Mobile menu without children -->
+          <a
+            *ngIf="!item.children"
+            [routerLink]="item.route"
+            class="header__mobile-link"
+            (click)="onCloseMobileMenu()"
+          >
+            {{ item.label }}
+          </a>
+
+          <!-- Mobile menu with children -->
+          <div *ngIf="item.children" class="header__mobile-dropdown">
+            <button
+              class="header__mobile-link header__mobile-link--dropdown"
+              (click)="onToggleSubmenu(item.label)"
+              [class.header__mobile-link--active]="activeSubmenu === item.label"
+            >
+              {{ item.label }}
+              <svg
+                class="header__mobile-dropdown-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <div
+              class="header__mobile-submenu"
+              [class.header__mobile-submenu--open]="
+                activeSubmenu === item.label
+              "
+            >
+              <a
+                *ngFor="let child of item.children"
+                [routerLink]="child.route"
+                class="header__mobile-submenu-link"
+                (click)="onCloseMobileMenu()"
+              >
+                {{ child.label }}
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Mobile Contact -->
+      <div class="header__mobile-contact">
+        <a href="tel:0665630727" class="header__mobile-contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+            ></path>
+          </svg>
+          <span>0665 63 07 27</span>
+        </a>
+        <a
+          href="mailto:horticole.atlas@gmail.com"
+          class="header__mobile-contact-link"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+            ></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>horticole.atlas.gmail.com</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div
+    class="header__overlay"
+    [class.header__overlay--visible]="isMobileMenuOpen"
+    (click)="onCloseMobileMenu()"
+  ></div>
+</header>

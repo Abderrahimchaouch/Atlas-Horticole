@@ -1,0 +1,86 @@
+<footer class="footer">
+  <div class="footer__mountain-overlay"></div>
+  
+  <div class="footer__content">
+    <div class="footer__container">
+      <!-- Logo & Description -->
+      <div class="footer__brand">
+        <div class="footer__logo">
+          <img src="images/logo.png" alt="" srcset="">
+          <h2 class="footer__logo-text">ATLAS HORTICOLE</h2>
+          <p class="footer__tagline">Monde d'Agriculture</p>
+        </div>
+        <p class="footer__description">
+          Solutions agricoles professionnelles inspirées par la force des montagnes de l'Atlas.
+          Expertise, qualité et innovation pour vos cultures.
+        </p>
+        <div class="footer__social">
+          <a href="#" class="footer__social-link" aria-label="Facebook">
+            <i class="icon-facebook"><img src="images/facebook.png" alt="" srcset=""></i>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="Instagram">
+            <i class="icon-instagram"><img src="images/instagram.png" alt="" srcset=""></i>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="LinkedIn">
+            <i class="icon-linkedin"><img src="images/linkedin.png" alt="" srcset=""></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navigation Sections -->
+      <div class="footer__sections">
+        <div class="footer__section" *ngFor="let section of sections">
+          <h3 class="footer__section-title">{{ section.title }}</h3>
+          <ul class="footer__links">
+            <li *ngFor="let link of section.links">
+              <a [routerLink]="link.route" class="footer__link">
+                {{ link.label }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer__contact">
+        <h3 class="footer__section-title">Contact</h3>
+        <div class="footer__contact-item">
+          <i class="icon-phone"></i>
+          <div>
+            <a *ngFor="let phone of contactInfo.phone" 
+               [href]="'tel:' + phone" 
+               class="footer__contact-link">
+              {{ phone }}
+            </a>
+          </div>
+        </div>
+        <div class="footer__contact-item">
+          <i class="icon-email"></i>
+          <a [href]="'mailto:' + contactInfo.email" class="footer__contact-link">
+            {{ contactInfo.email }}
+          </a>
+        </div>
+        <div class="footer__contact-item">
+          <i class="icon-location"></i>
+          <span class="footer__contact-text">{{ contactInfo.address }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer__bottom">
+      <div class="footer__bottom-container">
+        <p class="footer__copyright">
+          © {{ currentYear }} Atlas Horticole. Tous droits réservés.
+        </p>
+        <div class="footer__legal">
+          <a routerLink="/mentions-legales" class="footer__legal-link">Mentions Légales</a>
+          <span class="footer__separator">|</span>
+          <a routerLink="/politique-confidentialite" class="footer__legal-link">Politique de Confidentialité</a>
+          <span class="footer__separator">|</span>
+          <a routerLink="/cgv" class="footer__legal-link">CGV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
