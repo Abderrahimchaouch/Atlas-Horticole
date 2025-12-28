@@ -1,0 +1,14 @@
+<app-products-pres
+  [products]="products"
+  [filteredProducts]="filteredProducts"
+  [categories]="categories"
+  [selectedCategory]="selectedCategory"
+  [searchQuery]="searchQuery"
+  [inStockOnly]="inStockOnly"
+  (categoryChange)="handleCategoryChange($event)"
+  (searchChange)="handleSearchChange($event)"
+  (stockFilterChange)="handleStockFilterChange($event)"
+  (productDetails)="handleProductDetails($event)"
+  (requestQuote)="handlerRequestQuote()"
+>
+</app-products-pres>

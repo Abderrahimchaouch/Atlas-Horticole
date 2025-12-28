@@ -3,29 +3,29 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'home',
-    loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
+    path: '',
+    loadChildren: () => import('./features/public/home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'contact',
-    loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
+    loadChildren: () => import('./features/public/contact/contact.module').then(m => m.ContactModule)
   },
   {
     path: 'a-propos',
-    loadChildren: () => import('./features/about/about.module').then(m => m.AboutModule)
+    loadChildren: () => import('./features/public/about/about.module').then(m => m.AboutModule)
   },
 
   {
     path: 'produits',
-    loadChildren: () => import('./features/products/products.module').then(m => m.ProductsModule)
+    loadChildren: () => import('./features/public/products/products.module').then(m => m.ProductsModule)
   },
   {
     path: 'articles',
-    loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule)
+    loadChildren: () => import('./features/public/articles/articles.module').then(m => m.ArticlesModule)
   },
   {
     path: 'catalogue',
-    loadChildren: () => import('./features/catalogue/catalogue.module').then(m => m.CatalogueModule)
+    loadChildren: () => import('./features/public/catalogue/catalogue.module').then(m => m.CatalogueModule)
   },
   { path: '**', redirectTo: '' }
 ];
