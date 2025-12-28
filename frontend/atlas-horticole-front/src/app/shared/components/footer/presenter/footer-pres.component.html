@@ -33,7 +33,7 @@
           <h3 class="footer__section-title">{{ section.title }}</h3>
           <ul class="footer__links">
             <li *ngFor="let link of section.links">
-              <a [routerLink]="link.route" class="footer__link">
+              <a [routerLink]="link.route" [fragment]="link?.fragment" class="footer__link">
                 {{ link.label }}
               </a>
             </li>

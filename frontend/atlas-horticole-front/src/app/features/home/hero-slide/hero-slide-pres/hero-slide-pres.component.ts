@@ -5,7 +5,8 @@ import { HeroSlide } from '../hero-slide-cont/HeroSlide.interface';
   selector: 'app-hero-slide-pres',
   standalone: false,
   templateUrl: './hero-slide-pres.component.html',
-  styleUrl: './hero-slide-pres.component.scss'
+  styleUrl: './hero-slide-pres.component.scss',
+  
 })
 export class HeroSlidePresComponent {
   @Input() slides: HeroSlide[] = [];

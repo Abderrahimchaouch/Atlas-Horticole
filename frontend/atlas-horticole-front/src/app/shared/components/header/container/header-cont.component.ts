@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { MenuItem } from './header.interface';
-
 
 @Component({
   selector: 'app-header-cont',
@@ -22,35 +23,49 @@ export class HeaderContComponent implements OnInit {
     {
       label: 'Produits',
       icon: 'products',
-      route: 'produits',
+      route: '/produits',
       children: [
-        { label: 'Biostimulants', route: '/produits/biostimulants' },
-        { label: 'Correcteurs de Carences', route: '/produits/correcteurs' },
-        { label: 'Engrais Hydrosolubles', route: '/produits/engrais' },
-        { label: 'Lutte Intégrée', route: '/produits/lutte-integree' },
-        { label: 'Produits Spéciaux', route: '/produits/speciaux' },
-        { label: 'Article Monitoring', route: '/produits/monitoring' }
+        {
+          label: 'Biostimulants',
+          route: '/produits',
+          filter: 'Biostimulants'
+        },
+        {
+          label: 'Correcteurs de Carences',
+          route: '/produits',
+          filter: 'Correcteurs de Carences'
+        },
+        {
+          label: 'Engrais Hydrosolubles',
+          route: '/produits',
+          filter: 'Engrais Hydrosolubles'
+        },
+        {
+          label: 'Lutte Intégrée',
+          route: '/produits',
+          filter: 'Lutte Intégrée'
+        },
+        {
+          label: 'Produits Spéciaux',
+          route: '/produits',
+          filter: 'Produits Spéciaux'
+        },
+        {
+          label: 'Article Monitoring',
+          route: '/produits',
+          filter: 'Monitoring'
+        }
       ]
     },
-    /* {
-      label: 'Solutions',
-      icon: 'solutions',
-      children: [
-        { label: 'Amendement de Sol', route: '/solutions/amendement' },
-        { label: 'Protection des Cultures', route: '/solutions/protection' },
-        { label: 'Nutrition des Plantes', route: '/solutions/nutrition' },
-        { label: 'Biocontrôle', route: '/solutions/biocontrole' }
-      ]
-    }, 
-    {
-      label: 'Services',
-      route: '/services',
-      icon: 'services'
-    },*/
     {
       label: 'Articles',
       route: '/articles',
       icon: 'articles'
+    },
+    {
+      label: 'Catalogue',
+      route: '/catalogue',
+      icon: 'catalogue'
     },
     {
       label: 'À Propos',
@@ -64,8 +79,14 @@ export class HeaderContComponent implements OnInit {
     }
   ];
 
+  constructor(private router: Router) { }
+
   ngOnInit(): void {
-    // Initialize component
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.handleCloseMobileMenu();
+    });
   }
 
   @HostListener('window:scroll', [])
@@ -87,5 +108,18 @@ export class HeaderContComponent implements OnInit {
   handleCloseMobileMenu(): void {
     this.isMobileMenuOpen = false;
     this.activeSubmenu = null;
+  }
+
+  handleSubmenuNavigation(route: string, filter?: string): void {
+    this.handleCloseMobileMenu();
+
+    if (filter) {
+      this.router.navigate([route], {
+        queryParams: { category: filter },
+        queryParamsHandling: 'merge'
+      });
+    } else {
+      this.router.navigate([route]);
+    }
   }
 }

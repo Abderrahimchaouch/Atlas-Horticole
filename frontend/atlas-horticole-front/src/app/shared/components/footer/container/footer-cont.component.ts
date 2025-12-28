@@ -15,38 +15,35 @@ export class FooterContComponent implements OnInit {
     {
       title: 'Nos Produits',
       links: [
-        { label: 'Biostimulants', route: '/produits/biostimulants' },
-        { label: 'Correcteurs de Carences', route: '/produits/correcteurs' },
-        { label: 'Engrais Hydrosolubles', route: '/produits/engrais' },
-        { label: 'Lutte Intégrée', route: '/produits/lutte-integree' },
-        { label: 'Produits Spéciaux', route: '/produits/speciaux' }
+        { label: 'Biostimulants', route: '/produits' },
+        { label: 'Correcteurs de Carences', route: '/produits' },
+        { label: 'Engrais Hydrosolubles', route: '/produits' },
+        { label: 'Lutte Intégrée', route: '/produits' },
+        { label: 'Produits Spéciaux', route: '/produits' }
       ]
     },
     {
-      title: 'Services',
+      title: 'Articles',
       links: [
-        { label: 'Consultation Agronomique', route: '/services/consultation' },
-        { label: 'Programmes Personnalisés', route: '/services/programmes' },
-        { label: 'Formation & Support', route: '/services/formation' },
-        { label: 'Analyse de Sol', route: '/services/analyse' }
+        { label: 'Innovation', route: '/articles' },
+        { label: 'Formation', route: '/articles' },
+        { label: 'Entreprise', route: '/articles' },
+        { label: 'Événements', route: '/articles' }
       ]
     },
     {
       title: 'À Propos',
       links: [
-        { label: 'Notre Histoire', route: '/a-propos/histoire' },
-        { label: 'Notre Équipe', route: '/a-propos/equipe' },
-        { label: 'Certifications', route: '/a-propos/certifications' },
-        { label: 'Actualités', route: '/actualites' }
+        { label: 'Qui sommes-nous ?', route: '/a-propos', fragment: 'about-hero' },
+        { label: 'Nos Valeurs', route: '/a-propos', fragment: 'about-values' },
+        { label: 'Notre Histoire', route: '/a-propos', fragment: 'about-story' },
       ]
     },
     {
       title: 'Ressources',
       links: [
-        { label: 'Documentation Technique', route: '/ressources/documentation' },
-        { label: 'Guides d\'Application', route: '/ressources/guides' },
         { label: 'FAQ', route: '/faq' },
-        { label: 'Téléchargements', route: '/telechargements' }
+        { label: 'Catalogue', route: '/catalogue' }
       ]
     }
   ];

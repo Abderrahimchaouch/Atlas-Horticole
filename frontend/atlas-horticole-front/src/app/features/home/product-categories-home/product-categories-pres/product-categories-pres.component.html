@@ -10,7 +10,8 @@
     <div class="categories__grid">
       <a
         *ngFor="let category of categories"
-        [routerLink]="category.route"
+        [routerLink]="['/produits']"
+        [queryParams]="{ category: category.id }"
         class="category-card"
         [attr.aria-label]="'Découvrir ' + category.title"
       >

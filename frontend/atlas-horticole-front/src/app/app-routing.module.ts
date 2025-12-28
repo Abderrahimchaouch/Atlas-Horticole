@@ -23,13 +23,10 @@ const routes: Routes = [
     path: 'articles',
     loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule)
   },
-  /*
-
   {
-    path: 'contact',
-    loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
+    path: 'catalogue',
+    loadChildren: () => import('./features/catalogue/catalogue.module').then(m => m.CatalogueModule)
   },
-*/
   { path: '**', redirectTo: '' }
 ];
 

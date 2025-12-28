@@ -31,7 +31,7 @@ export class HeroSlideContComponent implements OnInit, OnDestroy {
       description: 'Des solutions innovantes pour améliorer la santé et le rendement de vos plantes',
       imageUrl: 'images/biostimulant.png',
       ctaText: 'Voir les solutions',
-      ctaRoute: '/produits/biostimulants'
+      ctaRoute: '/produits'
     },
     {
       id: '3',
@@ -40,7 +40,7 @@ export class HeroSlideContComponent implements OnInit, OnDestroy {
       description: 'Biocontrôle et pollinisation pour une agriculture durable',
       imageUrl: 'images/coccinelle-pucerons.jpg',
       ctaText: 'En savoir plus',
-      ctaRoute: '/produits/lutte-integree'
+      ctaRoute: '/produits'
     }
   ];
 

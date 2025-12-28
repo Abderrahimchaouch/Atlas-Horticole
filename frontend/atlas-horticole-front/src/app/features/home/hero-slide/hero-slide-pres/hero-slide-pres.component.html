@@ -20,10 +20,10 @@
       <!-- Content -->
       <div class="hero__content">
         <div class="hero__container">
-          <span class="hero__subtitle" [@fadeInUp]>{{ slide.subtitle }}</span>
-          <h1 class="hero__title" [@fadeInUp]>{{ slide.title }}</h1>
-          <p class="hero__description" [@fadeInUp]>{{ slide.description }}</p>
-          <a [routerLink]="slide.ctaRoute" class="hero__cta" [@fadeInUp]>
+          <span class="hero__subtitle">{{ slide.subtitle }}</span>
+          <h1 class="hero__title">{{ slide.title }}</h1>
+          <p class="hero__description">{{ slide.description }}</p>
+          <a [routerLink]="slide.ctaRoute" class="hero__cta">
             {{ slide.ctaText }}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <line x1="5" y1="12" x2="19" y2="12"></line>

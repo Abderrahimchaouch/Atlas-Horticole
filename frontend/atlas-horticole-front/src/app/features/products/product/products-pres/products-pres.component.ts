@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router'; // Ajouter cette importation
 import { Product } from '../products.model';
 
 @Component({
@@ -18,6 +19,9 @@ export class ProductsPresComponent {
   @Output() categoryChange = new EventEmitter<string>();
   @Output() searchChange = new EventEmitter<string>();
   @Output() stockFilterChange = new EventEmitter<boolean>();
+  @Output() productDetails = new EventEmitter<string>();
+
+  constructor(private router: Router) { }
 
   onCategoryChange(category: string): void {
     this.categoryChange.emit(category);
@@ -29,5 +33,9 @@ export class ProductsPresComponent {
 
   onStockFilterChange(checked: boolean): void {
     this.stockFilterChange.emit(checked);
+  }
+
+  onProductDetails(productId: string): void {
+    this.productDetails.emit(productId);
   }
 }

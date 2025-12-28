@@ -13,7 +13,7 @@ export class ProductCategoriesContComponent implements OnInit {
 
   categories: ProductCategory[] = [
     {
-      id: 'biostimulants',
+      id: 'Biostimulants',
       title: 'Biostimulants',
       description: 'Amendement organique pour améliorer la fertilité du sol et stimuler la croissance',
       route: '/produits/biostimulants',
@@ -21,7 +21,7 @@ export class ProductCategoriesContComponent implements OnInit {
       imageUrl: 'images/Biostimulant.jpeg',
     },
     {
-      id: 'correcteurs',
+      id: 'Correcteurs de Carences',
       title: 'Correcteurs de Carences',
       description: 'Solutions complètes pour corriger les déficiences nutritionnelles de vos cultures',
       route: '/produits/correcteurs',
@@ -29,7 +29,7 @@ export class ProductCategoriesContComponent implements OnInit {
       imageUrl: 'images/engrais-inorganique.jpg'
     },
     {
-      id: 'engrais',
+      id: 'Engrais Hydrosolubles',
       title: 'Engrais Hydrosolubles',
       description: 'Formulations sans chlore pour une nutrition optimale et progressive',
       route: '/produits/engrais',
@@ -37,7 +37,7 @@ export class ProductCategoriesContComponent implements OnInit {
       imageUrl: 'images/Hydrosouble.jpeg'
     },
     {
-      id: 'lutte-integree',
+      id: 'Lutte Intégrée',
       title: 'Lutte Intégrée',
       description: 'Protection biologique et pollinisation naturelle pour une agriculture durable',
       route: '/produits/lutte-integree',
@@ -45,7 +45,7 @@ export class ProductCategoriesContComponent implements OnInit {
       imageUrl: 'images/Ruche-de-bourdons.jpeg'
     },
     {
-      id: 'speciaux',
+      id: 'Produits Spéciaux',
       title: 'Produits Spéciaux',
       description: 'Solutions innovantes adaptées à des besoins spécifiques de vos cultures',
       route: '/produits/speciaux',
@@ -53,7 +53,7 @@ export class ProductCategoriesContComponent implements OnInit {
       imageUrl: 'images/produit-speciaux.webp'
     },
     {
-      id: 'monitoring',
+      id: 'Monitoring',
       title: 'Article Monitoring',
       description: 'Outils de surveillance et de détection pour un contrôle optimal',
       route: '/produits/monitoring',

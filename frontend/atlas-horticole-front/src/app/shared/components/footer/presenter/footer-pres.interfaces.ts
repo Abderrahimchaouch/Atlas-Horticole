@@ -1,6 +1,7 @@
 export interface FooterLink {
   label: string;
   route?: string;
+  fragment?:string;
   external?: boolean;
 }
 

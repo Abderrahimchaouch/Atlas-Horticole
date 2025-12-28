@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../products.model';
 
 @Component({
@@ -15,13 +16,24 @@ export class ProductsContComponent implements OnInit {
   searchQuery = '';
   inStockOnly = false;
 
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router // Ajouter Router
+  ) { }
+
   ngOnInit(): void {
     this.loadProducts();
-    this.applyFilters();
+
+    // Écouter les paramètres de l'URL
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.selectedCategory = params['category'];
+      }
+      this.applyFilters();
+    });
   }
 
   private loadProducts(): void {
-    // Données basées sur votre catalogue
     this.products = [
       // Biostimulants
       {
@@ -336,6 +348,11 @@ export class ProductsContComponent implements OnInit {
     this.applyFilters();
   }
 
+  handleProductDetails(productId: string): void {
+    // Navigation vers la page de détails
+    this.router.navigate(['/produits', productId]);
+  }
+
   private applyFilters(): void {
     this.filteredProducts = this.products.filter(product => {
       const matchesCategory = this.selectedCategory === 'Tous' || product.category === this.selectedCategory;
@@ -347,5 +364,4 @@ export class ProductsContComponent implements OnInit {
       return matchesCategory && matchesSearch && matchesStock;
     });
   }
-
 }

@@ -1,0 +1,11 @@
+<app-product-details-pres
+  [product]="product"
+  [quantity]="quantity"
+  (increaseQuantity)="handleIncreaseQuantity()"
+  (decreaseQuantity)="handleDecreaseQuantity()"
+  (requestQuote)="handleRequestQuote()"
+  (downloadDocumentation)="handleDownloadDocumentation()"
+  (navigateToProduct)="handleNavigateToProduct($event)"
+  (goBack)="goBack()"
+>
+</app-product-details-pres>

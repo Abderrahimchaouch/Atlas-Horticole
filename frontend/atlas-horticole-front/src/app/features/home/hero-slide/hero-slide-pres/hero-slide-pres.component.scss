@@ -30,6 +30,23 @@
     &--active {
       opacity: 1;
       visibility: visible;
+      
+      // Animations pour le contenu
+      .hero__subtitle {
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+      }
+      
+      .hero__title {
+        animation: fadeInUp 0.6s ease-out 0.5s both;
+      }
+      
+      .hero__description {
+        animation: fadeInUp 0.6s ease-out 0.7s both;
+      }
+      
+      .hero__cta {
+        animation: fadeInUp 0.6s ease-out 0.9s both;
+      }
     }
   }
 
@@ -106,6 +123,8 @@
     background: rgba(255, 255, 255, 0.15);
     border-radius: 30px;
     backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateY(30px);
 
     @media (max-width: 768px) {
       font-size: 0.85rem;
@@ -120,6 +139,8 @@
     margin: 0 0 1.5rem;
     line-height: 1.2;
     max-width: 800px;
+    opacity: 0;
+    transform: translateY(30px);
 
     @media (max-width: 1024px) {
       font-size: 2.75rem;
@@ -136,6 +157,8 @@
     margin: 0 0 2.5rem;
     max-width: 600px;
     line-height: 1.6;
+    opacity: 0;
+    transform: translateY(30px);
 
     @media (max-width: 768px) {
       font-size: 1.05rem;
@@ -156,6 +179,8 @@
     border-radius: 50px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(30px);
 
     svg {
       width: 20px;
@@ -165,7 +190,7 @@
     }
 
     &:hover {
-      transform: translateY(-3px);
+      transform: translateY(-3px) translateY(0) !important;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
 
       svg {
@@ -235,6 +260,18 @@
       bottom: 2rem;
       width: 95%;
     }
+  }
+}
+
+// Animation Keyframes
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

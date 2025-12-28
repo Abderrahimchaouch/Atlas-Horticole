@@ -3,4 +3,5 @@ export interface MenuItem {
     route?: string;
     children?: MenuItem[];
     icon?: string;
+    filter?: string;
 }

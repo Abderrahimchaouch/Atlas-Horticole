@@ -1,0 +1,222 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-state">
+  <div class="loading-spinner"></div>
+  <p>Chargement du produit...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !isLoading" class="error-state">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="8" x2="12" y2="12"></line>
+    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+  </svg>
+  <h3>Erreur de chargement</h3>
+  <p>{{ error }}</p>
+  <button (click)="goBack.emit()" class="btn-secondary">
+    Retour aux produits
+  </button>
+</div>
+
+<!-- Product Details -->
+<div *ngIf="product && !isLoading && !error" class="product-details-container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <button (click)="goBack.emit()" class="breadcrumb-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Retour
+    </button>
+    <span>></span>
+    <a (click)="goBack.emit()" class="breadcrumb-link">Produits</a>
+    <span>></span>
+    <span class="current">{{ product.name }}</span>
+  </nav>
+
+  <div class="product-main">
+    <!-- Product Images -->
+    <div class="product-images">
+      <div class="main-image">
+        <div class="image-placeholder">
+          <span>{{ product.name.charAt(0) }}</span>
+        </div>
+      </div>
+
+      <!-- Featured badge -->
+      <div class="featured-badge" *ngIf="product.featured">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+          ></path>
+        </svg>
+        Produit Vedette
+      </div>
+
+      <!-- Stock status -->
+      <div class="stock-status-badge" [class.out-of-stock]="!product.inStock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path *ngIf="product.inStock" d="M8 12l3 3 5-5"></path>
+          <line *ngIf="!product.inStock" x1="15" y1="9" x2="9" y2="15"></line>
+          <line *ngIf="!product.inStock" x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        {{ product.inStock ? "En stock" : "Rupture de stock" }}
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info">
+      <div class="product-header">
+        <span class="category-badge">{{ product.category }}</span>
+        <h1 class="product-title">{{ product.name }}</h1>
+      </div>
+
+      <!-- Description -->
+      <div class="product-description">
+        <h3>Description</h3>
+        <p>{{ product.description }}</p>
+      </div>
+
+      <!-- Composition -->
+      <div class="product-composition" *ngIf="product.composition">
+        <h3>Composition</h3>
+        <div class="composition-content">
+          {{ product.composition }}
+        </div>
+      </div>
+
+      <!-- Dosage -->
+      <div class="product-dosage" *ngIf="product.dosage">
+        <h3>Dosage et Mode d'emploi</h3>
+        <div class="dosage-content">
+          {{ product.dosage }}
+        </div>
+      </div>
+
+      <!-- Usage Instructions -->
+      <div class="usage-instructions" *ngIf="product.usageInstructions">
+        <h3>Instructions d'utilisation</h3>
+        <ul>
+          <li *ngFor="let instruction of product.usageInstructions">
+            {{ instruction }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Actions -->
+      <div class="product-actions">
+        <!-- Quantity -->
+        <div class="quantity-selector">
+          <label>Quantité</label>
+          <div class="quantity-controls">
+            <button
+              (click)="decreaseQuantity.emit()"
+              [disabled]="quantity <= 1"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <span class="quantity-value">{{ quantity }}</span>
+            <button (click)="increaseQuantity.emit()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button
+            class="btn-primary"
+            (click)="requestQuote.emit()"
+            [disabled]="!product.inStock"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+            Demander un devis
+          </button>
+
+          <button class="btn-secondary" (click)="downloadDocumentation.emit()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Télécharger la documentation
+          </button>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <p>Pour plus d'informations ou pour passer commande :</p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"
+                ></path>
+              </svg>
+              <span>Appelez-nous : +212 XXX XXX XXX</span>
+            </div>
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>Email : contact"&#64;"example.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technical Specifications -->
+  <div class="technical-specs" *ngIf="product.technicalSpecs">
+    <h2>Spécifications techniques</h2>
+    <div class="specs-grid">
+      <div class="spec-item" *ngFor="let spec of product.technicalSpecs">
+        <h4>{{ spec.name }}</h4>
+        <p>{{ spec.value }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div
+    class="related-products"
+    *ngIf="product.relatedProducts && product.relatedProducts.length > 0"
+  >
+    <h2>Produits similaires</h2>
+    <div class="related-grid">
+      <div
+        class="related-product-card"
+        *ngFor="let related of product.relatedProducts"
+      >
+        <div class="related-product-image">
+          <div class="image-placeholder-small"></div>
+          <div class="stock-badge" [class.out-of-stock]="!related.inStock">
+            {{ related.inStock ? "En stock" : "Rupture" }}
+          </div>
+        </div>
+        <div class="related-product-info">
+          <span class="related-category">{{ related.category }}</span>
+          <h3>{{ related.name }}</h3>
+          <p>{{ related.description.substring(0, 80) }}...</p>
+          <button class="btn-view" (click)="navigateToProduct.emit(related.id)">
+            Voir le produit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

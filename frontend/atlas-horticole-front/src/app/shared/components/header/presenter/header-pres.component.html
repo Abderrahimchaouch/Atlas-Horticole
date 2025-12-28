@@ -29,6 +29,7 @@
             [routerLink]="item.route"
             routerLinkActive="header__menu-link--active"
             class="header__menu-link"
+            (click)="onCloseMobileMenu()"
           >
             {{ item.label }}
           </a>
@@ -39,6 +40,7 @@
               class="header__submenu-link"
               *ngIf="item.route"
               [routerLink]="item.route"
+              (click)="onCloseMobileMenu()"
             >
               <button class="header__menu-link header__menu-link--dropdown">
                 {{ item.label }}
@@ -56,8 +58,8 @@
               <div class="header__submenu-content">
                 <a
                   *ngFor="let child of item.children"
-                  [routerLink]="child.route"
                   class="header__submenu-link"
+                  (click)="onSubmenuNavigation(child.route || '', child.filter)"
                 >
                   {{ child.label }}
                 </a>
@@ -140,9 +142,8 @@
             >
               <a
                 *ngFor="let child of item.children"
-                [routerLink]="child.route"
                 class="header__mobile-submenu-link"
-                (click)="onCloseMobileMenu()"
+                (click)="onSubmenuNavigation(child.route || '', child.filter)"
               >
                 {{ child.label }}
               </a>
