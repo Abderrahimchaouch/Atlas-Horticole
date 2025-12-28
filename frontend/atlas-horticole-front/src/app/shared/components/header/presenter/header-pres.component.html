@@ -35,18 +35,23 @@
 
           <!-- Menu with children -->
           <div *ngIf="item.children" class="header__menu-dropdown">
-            <button class="header__menu-link header__menu-link--dropdown">
-              {{ item.label }}
-              <svg
-                class="header__dropdown-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-
+            <a
+              class="header__submenu-link"
+              *ngIf="item.route"
+              [routerLink]="item.route"
+            >
+              <button class="header__menu-link header__menu-link--dropdown">
+                {{ item.label }}
+                <svg
+                  class="header__dropdown-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </a>
             <div class="header__submenu">
               <div class="header__submenu-content">
                 <a

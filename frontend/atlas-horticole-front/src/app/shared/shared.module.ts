@@ -6,6 +6,7 @@ import { FooterContComponent } from './components/footer/container/footer-cont.c
 import { FooterPresComponent } from './components/footer/presenter/footer-pres.component';
 import { HeaderContComponent } from './components/header/container/header-cont.component';
 import { HeaderPresComponent } from './components/header/presenter/header-pres.component';
+import { FilterPipe } from './pipes/FilterPipe';
 
 
 
@@ -14,7 +15,8 @@ import { HeaderPresComponent } from './components/header/presenter/header-pres.c
     FooterContComponent,
     FooterPresComponent,
     HeaderContComponent,
-    HeaderPresComponent
+    HeaderPresComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,
@@ -25,7 +27,8 @@ import { HeaderPresComponent } from './components/header/presenter/header-pres.c
   exports: [
     FooterContComponent,
     HeaderContComponent,
-    HttpClientModule
+    HttpClientModule,
+    FilterPipe
   ]
 
 })

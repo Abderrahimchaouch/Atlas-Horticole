@@ -15,19 +15,21 @@ const routes: Routes = [
     loadChildren: () => import('./features/about/about.module').then(m => m.AboutModule)
   },
 
-  /*   {
-      path: 'produits',
-      loadChildren: () => import('./features/products/products.module').then(m => m.ProductsModule)
-    },
-    {
-      path: 'articles',
-      loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule)
-    },
-    {
-      path: 'contact',
-      loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
-    },
-  */
+  {
+    path: 'produits',
+    loadChildren: () => import('./features/products/products.module').then(m => m.ProductsModule)
+  },
+  {
+    path: 'articles',
+    loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule)
+  },
+  /*
+
+  {
+    path: 'contact',
+    loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
+  },
+*/
   { path: '**', redirectTo: '' }
 ];
 

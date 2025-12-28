@@ -18,7 +18,7 @@
     <!-- Articles Grid -->
     <div class="news__grid">
       <article *ngFor="let article of articles" class="news-card">
-        <a [routerLink]="article.route" class="news-card__link">
+        <a [routerLink]="['/articles', article.id]" class="news-card__link">
           <!-- Image -->
           <div class="news-card__image">
             <div

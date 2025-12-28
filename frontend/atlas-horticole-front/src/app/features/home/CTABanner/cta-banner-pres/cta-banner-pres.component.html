@@ -21,17 +21,18 @@
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </a>
-
-        <a
-          [routerLink]="banner.secondaryButton.route"
-          class="cta-banner__button cta-banner__button--secondary"
-        >
-          {{ banner.secondaryButton.text }}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
+        <div *ngIf="banner.secondaryButton">
+          <a
+            [routerLink]="banner.secondaryButton.route"
+            class="cta-banner__button cta-banner__button--secondary"
+          >
+            {{ banner.secondaryButton.text }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
 

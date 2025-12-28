@@ -5,7 +5,7 @@ export interface CtaBanner {
         text: string;
         route: string;
     };
-    secondaryButton: {
+    secondaryButton?: {
         text: string;
         route: string;
     };

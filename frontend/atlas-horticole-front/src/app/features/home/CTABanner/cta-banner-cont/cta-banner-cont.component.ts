@@ -15,10 +15,10 @@ export class CtaBannerContComponent implements OnInit {
       text: 'Contacter un expert',
       route: '/contact'
     },
-    secondaryButton: {
-      text: 'Découvrir nos services',
-      route: '/services'
-    },
+    /*     secondaryButton: {
+          text: 'Découvrir nos services',
+          route: '/services'
+        }, */
     imageUrl: 'images/surface-irrigation.jpg'
   };
 

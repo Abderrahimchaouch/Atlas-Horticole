@@ -1,0 +1,170 @@
+<div class="news-page">
+  <!-- Hero Section -->
+  <section class="news-hero">
+    <div class="news-hero__background">
+      <div class="news-hero__overlay"></div>
+    </div>
+    <div class="news-hero__content">
+      <div class="news-hero__container">
+        <h1 class="news-hero__title">Actualités & Informations</h1>
+        <p class="news-hero__subtitle">
+          Restez informé des dernières nouveautés d'Atlas Horticole
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Article -->
+  <section class="featured-article" *ngIf="featuredArticle">
+    <div class="featured-article__container">
+      <a
+        [routerLink]="['/articles', featuredArticle.id]"
+        class="featured-article__link"
+      >
+        <div class="featured-article__badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+            ></path>
+          </svg>
+          À la une
+        </div>
+        <div class="featured-article__image">
+          <div class="featured-article__image-placeholder"></div>
+        </div>
+        <div class="featured-article__content">
+          <span class="featured-article__category">{{
+            featuredArticle.category
+          }}</span>
+          <h2 class="featured-article__title">{{ featuredArticle.title }}</h2>
+          <p class="featured-article__excerpt">{{ featuredArticle.excerpt }}</p>
+          <div class="featured-article__meta">
+            <span class="featured-article__date">{{
+              featuredArticle.date | date : "dd MMMM yyyy"
+            }}</span>
+            <span class="featured-article__separator">•</span>
+            <span class="featured-article__read-time"
+              >{{ featuredArticle.readTime }} min de lecture</span
+            >
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="news-content">
+    <div class="news-content__container">
+      <!-- Filters Sidebar -->
+      <aside class="news-filters">
+        <div class="news-filters__wrapper">
+          <!-- Search -->
+          <div class="filter-group">
+            <label class="filter-group__label">Rechercher</label>
+            <div class="search-input">
+              <svg
+                class="search-input__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                type="search"
+                class="search-input__field"
+                placeholder="Rechercher..."
+                [value]="searchQuery"
+                (input)="onSearchChange($any($event.target).value)"
+              />
+            </div>
+          </div>
+
+          <!-- Categories -->
+          <div class="filter-group">
+            <label class="filter-group__label">Catégories</label>
+            <div class="category-list">
+              <button
+                *ngFor="let category of categories"
+                class="category-item"
+                [class.category-item--active]="selectedCategory === category"
+                (click)="onCategoryChange(category)"
+              >
+                {{ category }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Articles Grid -->
+      <div class="news-articles">
+        <div class="news-articles__header">
+          <p class="news-articles__count">
+            <strong>{{ filteredArticles.length }}</strong> article(s) trouvé(s)
+          </p>
+        </div>
+
+        <!-- No Results -->
+        <div *ngIf="filteredArticles.length === 0" class="no-results">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3>Aucun article trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+          <article
+            *ngFor="let article of filteredArticles"
+            class="article-card"
+          >
+            <a
+              [routerLink]="['/articles', article.id]"
+              class="article-card__link"
+            >
+              <div class="article-card__image">
+                <div class="article-card__image-placeholder"></div>
+                <span class="article-card__category">{{
+                  article.category
+                }}</span>
+              </div>
+
+              <div class="article-card__content">
+                <time
+                  class="article-card__date"
+                  [dateTime]="article.date.toISOString()"
+                >
+                  {{ article.date | date : "dd MMMM yyyy" }}
+                </time>
+                <h3 class="article-card__title">{{ article.title }}</h3>
+                <p class="article-card__excerpt">{{ article.excerpt }}</p>
+
+                <div class="article-card__footer">
+                  <span class="article-card__read-time">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {{ article.readTime }} min
+                  </span>
+                  <span class="article-card__read-more">
+                    Lire la suite
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

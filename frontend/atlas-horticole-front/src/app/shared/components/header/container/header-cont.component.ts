@@ -4,7 +4,7 @@ import { MenuItem } from './header.interface';
 
 @Component({
   selector: 'app-header-cont',
-  standalone:false,
+  standalone: false,
   templateUrl: './header-cont.component.html',
   styleUrl: './header-cont.component.scss'
 })
@@ -22,6 +22,7 @@ export class HeaderContComponent implements OnInit {
     {
       label: 'Produits',
       icon: 'products',
+      route: 'produits',
       children: [
         { label: 'Biostimulants', route: '/produits/biostimulants' },
         { label: 'Correcteurs de Carences', route: '/produits/correcteurs' },
@@ -31,7 +32,7 @@ export class HeaderContComponent implements OnInit {
         { label: 'Article Monitoring', route: '/produits/monitoring' }
       ]
     },
-    {
+    /* {
       label: 'Solutions',
       icon: 'solutions',
       children: [
@@ -40,16 +41,16 @@ export class HeaderContComponent implements OnInit {
         { label: 'Nutrition des Plantes', route: '/solutions/nutrition' },
         { label: 'Biocontrôle', route: '/solutions/biocontrole' }
       ]
-    },
+    }, 
     {
       label: 'Services',
       route: '/services',
       icon: 'services'
-    },
+    },*/
     {
-      label: 'Catalogue',
-      route: '/catalogue',
-      icon: 'catalog'
+      label: 'Articles',
+      route: '/articles',
+      icon: 'articles'
     },
     {
       label: 'À Propos',
